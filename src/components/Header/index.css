@@ -6,6 +6,8 @@
   padding: 10px;
   justify-content: space-around;
   width: 100vw;
+  position: fixed;
+  background-color: white;
 }
 .logo-container {
   display: flex;
@@ -96,6 +98,8 @@
   }
   .nav-bar {
     justify-content: space-between;
+    border: none;
+    display: flex;
   }
   .hamburger-btn {
     display: flex;
@@ -110,11 +114,25 @@
     align-items: center;
     justify-content: space-between;
     transition: ease-in-out 3ms;
+    background-color: white;
   }
   .close-btn {
     background-color: transparent;
     font-size: 20px;
     border: none;
     margin-left: 20px;
+  }
+  .sm-search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15vh;
+  }
+  .nav-link-container {
+    margin-top: 20vh;
+  }
+  .sm-main-container {
+    display: flex;
+    flex-direction: column;
   }
 }

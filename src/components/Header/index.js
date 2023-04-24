@@ -1,4 +1,5 @@
 import {Component} from 'react'
+import Cookies from 'js-cookie'
 import {withRouter, Link} from 'react-router-dom'
 import {FaSearch} from 'react-icons/fa'
 import {IoCloseCircle} from 'react-icons/io5'
@@ -7,11 +8,12 @@ import {GiHamburgerMenu} from 'react-icons/gi'
 import './index.css'
 
 class Header extends Component {
-  state = {isOpened: false}
+  state = {isOpened: false, isSearchBarShow: false}
 
   openMenu = () => {
     this.setState(prevState => ({
       isOpened: !prevState.isOpened,
+      isSearchBarShow: false,
     }))
   }
 
@@ -19,15 +21,36 @@ class Header extends Component {
     this.setState({isOpened: false})
   }
 
+  enableSearchBar = () => {
+    this.setState({isOpened: false, isSearchBarShow: true})
+  }
+
+  enterSearchInput = event => {
+    const {updateSearchInput} = this.props
+    updateSearchInput(event.target.value)
+  }
+
+  onClickLogout = () => {
+    const {history} = this.props
+
+    Cookies.remove('jwt_token')
+    history.replace('/login')
+  }
+
+  onClickFilter = () => {
+    const {applyFilter} = this.props
+    applyFilter()
+  }
+
   render() {
-    const {isOpened} = this.state
+    const {isOpened, isSearchBarShow} = this.state
     const {location} = this.props
     const {pathname} = location
     const isHomeActive = pathname === '/' ? 'active-link' : 'link-style'
     const isProfileActive =
       pathname === '/profile' ? 'active-link' : 'link-style'
     return (
-      <>
+      <div className="sm-main-container">
         <nav className="nav-bar">
           <div className="logo-container">
             <Link to="/" className="link-item">
@@ -42,11 +65,13 @@ class Header extends Component {
           <div className="search-links-container">
             <div className="header-search-container">
               <input
+                onChange={this.enterSearchInput}
                 type="search"
                 className="header-search-bar"
                 placeholder="Search Caption"
               />
               <button
+                onClick={this.onClickFilter}
                 type="button"
                 data-testid="searchIcon"
                 className="header-search-btn"
@@ -62,7 +87,11 @@ class Header extends Component {
                 <li className={isProfileActive}>Profile</li>
               </Link>
             </ul>
-            <button type="button" className="logout-btn">
+            <button
+              onClick={this.onClickLogout}
+              type="button"
+              className="logout-btn"
+            >
               Logout
             </button>
           </div>
@@ -83,8 +112,14 @@ class Header extends Component {
               <Link to="/profile" className="link-item">
                 <li className={isProfileActive}>Profile</li>
               </Link>
-              <li className="link-style">Search</li>
-              <button type="button" className="logout-btn">
+              <li onClick={this.enableSearchBar} className="link-style">
+                Search
+              </li>
+              <button
+                onClick={this.onClickLogout}
+                type="button"
+                className="logout-btn"
+              >
                 Logout
               </button>
               <button
@@ -97,7 +132,26 @@ class Header extends Component {
             </ul>
           </div>
         )}
-      </>
+        {isSearchBarShow && (
+          <div className="sm-search-container">
+            <div className="header-search-container">
+              <input
+                onChange={this.enterSearchInput}
+                type="search"
+                className="header-search-bar"
+                placeholder="Search Caption"
+              />
+              <button
+                type="button"
+                data-testid="searchIcon"
+                className="header-search-btn"
+              >
+                <FaSearch />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     )
   }
 }
