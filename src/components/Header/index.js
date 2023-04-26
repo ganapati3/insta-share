@@ -48,7 +48,7 @@ class Header extends Component {
     const {pathname} = location
     const isHomeActive = pathname === '/' ? 'active-link' : 'link-style'
     const isProfileActive =
-      pathname === '/profile' ? 'active-link' : 'link-style'
+      pathname === '/my-profile' ? 'active-link' : 'link-style'
     return (
       <div className="sm-main-container">
         <nav className="nav-bar">
@@ -83,7 +83,7 @@ class Header extends Component {
               <Link to="/" className="link-item">
                 <li className={isHomeActive}>Home</li>
               </Link>
-              <Link to="/profile" className="link-item">
+              <Link to="/my-profile" className="link-item">
                 <li className={isProfileActive}>Profile</li>
               </Link>
             </ul>
@@ -109,7 +109,7 @@ class Header extends Component {
               <Link to="/" className="link-item">
                 <li className={isHomeActive}>Home</li>
               </Link>
-              <Link to="/profile" className="link-item">
+              <Link to="/my-profile" className="link-item">
                 <li className={isProfileActive}>Profile</li>
               </Link>
               <li onClick={this.enableSearchBar} className="link-style">
@@ -142,6 +142,7 @@ class Header extends Component {
                 placeholder="Search Caption"
               />
               <button
+                onClick={this.onClickFilter}
                 type="button"
                 data-testid="searchIcon"
                 className="header-search-btn"

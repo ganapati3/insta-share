@@ -51,6 +51,9 @@ class HomePage extends Component {
     storiesList: [],
     homeApiStatus: '',
     homePostsList: [],
+    searchInput: '',
+    searchResult: false,
+    searchPostList: [],
   }
 
   componentDidMount() {
@@ -82,7 +85,13 @@ class HomePage extends Component {
         storiesList: formattedData,
         storyApiStatus: apiConstants.success,
       })
+    } else {
+      this.setState({storyApiStatus: apiConstants.failure})
     }
+  }
+
+  onClickStoryRetry = () => {
+    this.getStoriesList()
   }
 
   renderStoryView = () => {
@@ -90,13 +99,13 @@ class HomePage extends Component {
     switch (storyApiStatus) {
       case apiConstants.success:
         return (
-          <div className="slick-container">
+          <ul className="slick-container">
             <Slider {...settings}>
               {storiesList.map(item => (
                 <StoryItem key={item.userId} storyDetails={item} />
               ))}
             </Slider>
-          </div>
+          </ul>
         )
       case apiConstants.loading:
         return (
@@ -104,7 +113,26 @@ class HomePage extends Component {
             <Loader type="TailSpin" color="#4094EF" height={50} width={50} />
           </div>
         )
-
+      case apiConstants.failure:
+        return (
+          <>
+            <img
+              className="failure-image"
+              src="https://res.cloudinary.com/dkh18yhyi/image/upload/v1682337182/alert-triangle_qtasur.png"
+              alt="failure view"
+            />
+            <h1 className="failure-text">
+              Something went wrong. Please try again
+            </h1>
+            <button
+              onClick={this.onClickStoryRetry}
+              type="button"
+              className="try-again-btn"
+            >
+              Try Again
+            </button>
+          </>
+        )
       default:
         return null
     }
@@ -134,6 +162,7 @@ class HomePage extends Component {
         likesCount: post.likes_count,
         caption: post.post_details.caption,
         imageUrl: post.post_details.image_url,
+        likeStatus: false,
         comments: post.comments.map(comment => ({
           userName: comment.user_name,
           userId: post.user_id,
@@ -157,6 +186,7 @@ class HomePage extends Component {
 
   onClickRetry = () => {
     this.getHomePosts()
+    this.getSearchResults()
   }
 
   renderFailureView = () => (
@@ -177,14 +207,51 @@ class HomePage extends Component {
     </>
   )
 
+  postLike = async id => {
+    const jwtToken = Cookies.get('jwt_token')
+    const {homePostsList} = this.state
+    const post = homePostsList.find(eachPost => eachPost.postId === id)
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({like_status: !post.likeStatus}),
+    }
+    const response = await fetch(
+      `https://apis.ccbp.in/insta-share/posts/${id}/like`,
+      options,
+    )
+    if (response.ok) {
+      this.setState(prevState => ({
+        homePostsList: prevState.homePostsList.map(eachItem => {
+          if (eachItem.postId === id) {
+            return {
+              ...eachItem,
+              likeStatus: !eachItem.likeStatus,
+              likesCount: eachItem.likeStatus
+                ? parseInt(eachItem.likesCount) - parseInt(1)
+                : parseInt(eachItem.likesCount) + parseInt(1),
+            }
+          }
+          return eachItem
+        }),
+      }))
+    }
+  }
+
   renderPostsView = () => {
     const {homePostsList} = this.state
     return (
-      <>
+      <ul className="home-posts-container">
         {homePostsList.map(eachPost => (
-          <PostItem key={eachPost.postId} postDetails={eachPost} />
+          <PostItem
+            postLike={this.postLike}
+            key={eachPost.postId}
+            postDetails={eachPost}
+          />
         ))}
-      </>
+      </ul>
     )
   }
 
@@ -202,13 +269,137 @@ class HomePage extends Component {
     }
   }
 
-  updateSearchInput = () => {}
+  postLikeSearch = async id => {
+    const jwtToken = Cookies.get('jwt_token')
+    const {searchPostList} = this.state
+    const post = searchPostList.find(eachPost => eachPost.postId === id)
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({like_status: !post.likeStatus}),
+    }
+    const response = await fetch(
+      `https://apis.ccbp.in/insta-share/posts/${id}/like`,
+      options,
+    )
+    if (response.ok) {
+      this.setState(prevState => ({
+        searchPostList: prevState.searchPostList.map(eachItem => {
+          if (eachItem.postId === id) {
+            return {
+              ...eachItem,
+              likeStatus: !eachItem.likeStatus,
+              likesCount: eachItem.likeStatus
+                ? parseInt(eachItem.likesCount) - parseInt(1)
+                : parseInt(eachItem.likesCount) + parseInt(1),
+            }
+          }
+          return eachItem
+        }),
+      }))
+    }
+  }
+
+  getSearchResults = async () => {
+    this.setState({searchApiStatus: apiConstants.loading})
+    const {searchInput} = this.state
+    const jwtToken = Cookies.get('jwt_token')
+    const options = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    }
+    const response = await fetch(
+      `https://apis.ccbp.in/insta-share/posts?search=${searchInput}`,
+      options,
+    )
+    const data = await response.json()
+    if (response.ok) {
+      const formattedData = data.posts.map(post => ({
+        userId: post.user_id,
+        userName: post.user_name,
+        profilePic: post.profile_pic,
+        postId: post.post_id,
+        createdAt: post.created_at,
+        likesCount: post.likes_count,
+        caption: post.post_details.caption,
+        imageUrl: post.post_details.image_url,
+        likeStatus: false,
+        comments: post.comments.map(comment => ({
+          userName: comment.user_name,
+          userId: post.user_id,
+          comment: comment.comment,
+        })),
+      }))
+      this.setState({
+        searchPostList: formattedData,
+        searchApiStatus: apiConstants.success,
+      })
+    } else {
+      this.setState({searchApiStatus: apiConstants.failure})
+    }
+  }
+
+  updateSearchInput = input => {
+    this.setState({searchInput: input})
+  }
 
   applyFilter = () => {
-    this.getHomePosts()
+    this.getSearchResults()
+    this.setState({searchResult: true})
+  }
+
+  renderSearchView = () => {
+    const {searchPostList} = this.state
+    return (
+      <div className="search-results">
+        {searchPostList.length > 0 ? (
+          <>
+            <h1>Search Results</h1>
+            <ul className="home-posts-container">
+              {searchPostList.map(eachPost => (
+                <PostItem
+                  postLike={this.postLikeSearch}
+                  key={eachPost.postId}
+                  postDetails={eachPost}
+                />
+              ))}
+            </ul>
+          </>
+        ) : (
+          <>
+            <img
+              className="search-not-found"
+              src="https://res.cloudinary.com/dkh18yhyi/image/upload/v1682337941/Group_rqsosr.png"
+              alt="search not found"
+            />
+            <h1>Search Not Found</h1>
+            <p>Try different keyword or search again</p>
+          </>
+        )}
+      </div>
+    )
+  }
+
+  renderSearchResults = () => {
+    const {searchApiStatus} = this.state
+    switch (searchApiStatus) {
+      case apiConstants.loading:
+        return this.renderLoader()
+      case apiConstants.failure:
+        return this.renderFailureView()
+      case apiConstants.success:
+        return this.renderSearchView()
+      default:
+        return null
+    }
   }
 
   render() {
+    const {searchResult} = this.state
     return (
       <>
         <Header
@@ -216,8 +407,16 @@ class HomePage extends Component {
           applyFilter={this.applyFilter}
         />
         <div className="home-page">
-          {this.renderStoryView()}
-          <div className="home-posts-container">{this.renderHomePosts()}</div>
+          {searchResult ? (
+            this.renderSearchResults()
+          ) : (
+            <>
+              {this.renderStoryView()}
+              <div className="home-posts-container">
+                {this.renderHomePosts()}
+              </div>
+            </>
+          )}
         </div>
       </>
     )

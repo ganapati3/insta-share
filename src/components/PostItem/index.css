@@ -3,6 +3,76 @@
   height: 40%;
   background: #ffffff;
   border: 1px solid #dbdbdb;
-  border-radius: 4px 4px 0px 0px;
+  border-radius: 4px;
   margin: 10px;
+}
+.profile-img {
+  margin: 20px;
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  padding: 1px;
+  background-color: white;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.with-linear-gradient {
+  border: 1px solid transparent;
+  background-image: linear-gradient(to bottom, #e20337, #c60188, #7700c3);
+  border-radius: 25px;
+}
+.post-user-name {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  color: #262626;
+  margin-right: 5px;
+}
+.profile-container {
+  display: flex;
+  align-items: center;
+}
+.post-image {
+  width: 100%;
+  max-height: 600px;
+}
+.reaction-icons-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+button {
+  background-color: transparent;
+  border: none;
+}
+.reaction-btn {
+  font-size: 20px;
+  margin-left: 15px;
+  font-weight: 500;
+  color: #475569;
+}
+.post-bottom-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 15px;
+  line-height: 18px;
+  padding-bottom: 15px;
+}
+.post-caption {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-size: 14px;
+  color: #262626;
+  line-height: 18px;
+}
+p {
+  margin: 5px;
+}
+.posted-at {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  color: #989898;
 }

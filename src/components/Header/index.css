@@ -100,6 +100,7 @@
     justify-content: space-between;
     border: none;
     display: flex;
+    width: 100vw;
   }
   .hamburger-btn {
     display: flex;
@@ -115,6 +116,7 @@
     justify-content: space-between;
     transition: ease-in-out 3ms;
     background-color: white;
+    width: 100vw;
   }
   .close-btn {
     background-color: transparent;
