@@ -39,6 +39,11 @@ class Header extends Component {
 
   onClickFilter = () => {
     const {applyFilter} = this.props
+    const {location, history} = this.props
+    const {pathname} = location
+    if (pathname !== '/') {
+      history.replace('/')
+    }
     applyFilter()
   }
 
@@ -68,7 +73,7 @@ class Header extends Component {
                 onChange={this.enterSearchInput}
                 type="search"
                 className="header-search-bar"
-                placeholder="Search Caption"
+                placeholder="Search Caption @ Home"
               />
               <button
                 onClick={this.onClickFilter}
@@ -139,7 +144,7 @@ class Header extends Component {
                 onChange={this.enterSearchInput}
                 type="search"
                 className="header-search-bar"
-                placeholder="Search Caption"
+                placeholder="Search Caption @ Home"
               />
               <button
                 onClick={this.onClickFilter}

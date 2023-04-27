@@ -156,7 +156,7 @@ class UserProfile extends Component {
           <h1 className="post-header-heading">Posts</h1>
         </div>
         <div className="posts-container">
-          {postsCount > 0 ? (
+          {posts.length > 0 ? (
             <ul className="grid-posts-container">
               {posts.map(item => (
                 <li key={item.id}>
@@ -191,10 +191,17 @@ class UserProfile extends Component {
     }
   }
 
+  updateSearchInput = () => {}
+
+  applyFilter = () => {}
+
   render() {
     return (
       <>
-        <Header />
+        <Header
+          updateSearchInput={this.updateSearchInput}
+          applyFilter={this.applyFilter}
+        />
         <div className="my-profile-container">{this.renderMyProfile()}</div>
       </>
     )

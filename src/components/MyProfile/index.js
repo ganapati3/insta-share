@@ -184,10 +184,17 @@ class MyProfile extends Component {
     }
   }
 
+  updateSearchInput = () => {}
+
+  applyFilter = () => {}
+
   render() {
     return (
       <>
-        <Header />
+        <Header
+          updateSearchInput={this.updateSearchInput}
+          applyFilter={this.applyFilter}
+        />
         <div className="my-profile-container">{this.renderMyProfile()}</div>
       </>
     )

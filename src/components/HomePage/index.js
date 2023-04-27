@@ -109,7 +109,7 @@ class HomePage extends Component {
         )
       case apiConstants.loading:
         return (
-          <div className="story-loader-container" data-testid="loader">
+          <div data-testid="loader" className="story-loader-container">
             <Loader type="TailSpin" color="#4094EF" height={50} width={50} />
           </div>
         )
@@ -186,6 +186,9 @@ class HomePage extends Component {
 
   onClickRetry = () => {
     this.getHomePosts()
+  }
+
+  onClickRetry = () => {
     this.getSearchResults()
   }
 
@@ -196,7 +199,7 @@ class HomePage extends Component {
         src="https://res.cloudinary.com/dkh18yhyi/image/upload/v1682337182/alert-triangle_qtasur.png"
         alt="failure view"
       />
-      <h1 className="failure-text">Something went wrong. Please try again</h1>
+      <p className="failure-text">Something went wrong. Please try again</p>
       <button
         onClick={this.onClickRetry}
         type="button"
@@ -348,8 +351,11 @@ class HomePage extends Component {
   }
 
   applyFilter = () => {
-    this.getSearchResults()
-    this.setState({searchResult: true})
+    const {searchInput} = this.state
+    if (searchInput !== '') {
+      this.getSearchResults()
+      this.setState({searchResult: true})
+    }
   }
 
   renderSearchView = () => {
@@ -358,8 +364,8 @@ class HomePage extends Component {
       <div className="search-results">
         {searchPostList.length > 0 ? (
           <>
-            <h1>Search Results</h1>
-            <ul className="home-posts-container">
+            <ul className="search-posts-container">
+              <h1>Search Results</h1>
               {searchPostList.map(eachPost => (
                 <PostItem
                   postLike={this.postLikeSearch}

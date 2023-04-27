@@ -117,6 +117,7 @@
     transition: ease-in-out 3ms;
     background-color: white;
     width: 100vw;
+    margin-bottom: 10vh;
   }
   .close-btn {
     background-color: transparent;
